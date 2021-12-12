@@ -32,7 +32,7 @@ apt install conntrack
 curl -Lo minikube https://storage.googleapis.com/minikube/releases/latest/minikube-linux-amd64 && chmod +x minikube && sudo mv minikube /usr/local/bin/
 minikube start --vm-driver=none
 
-root@Opstree-Kapendra:/home/kapendra/haptikGIT/haptik-k8s# minikube status
+kapendra@Opstree-Kapendra:~/haptik$ minikube status
 minikube
 type: Control Plane
 host: Running
@@ -41,11 +41,138 @@ apiserver: Running
 kubeconfig: Configured
 
 ```
-1.3 Deploy a simple Tomcat Application 
-1.4 Expose via Nginx Ingress controller.
-1.5 Have at least 2 application pods running. 
-1.6 Please have readiness and liveliness probes.
-1.7 K8s files can be shared with
+
+- 1.3 Deploy a simple Tomcat Application 
+```
+# make host entry
+
+kapendra@Opstree-Kapendra:~/haptik$ cat /etc/hosts
+127.0.0.1	localhost haptik-test.com haptik-kibana.com
+
+# The following lines are desirable for IPv6 capable hosts
+::1     ip6-localhost ip6-loopback
+fe00::0 ip6-localnet
+ff00::0 ip6-mcastprefix
+ff02::1 ip6-allnodes
+ff02::2 ip6-allrouters
+127.0.0.1	host.minikube.internal
+192.168.1.8	control-plane.minikube.internal
+
+# Run build script
+./build.sh
+```
+
+- 1.4 Expose via Nginx Ingress controller.
+```
+#Enable ingress addon on minikube
+
+minikube addons enable ingress
+
+# used below manifest for ingress object (part of assessment file)
+---
+
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: tomcat-app
+  labels:
+    app: tomcat-app
+  annotations:
+    kubernetes.io/ingress.class: nginx
+    nginx.ingress.kubernetes.io/rewrite-target: /
+spec:
+  rules:
+    - host: haptik-test.com
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: tomcat-app
+                port:
+                  number: 8080
+```
+
+- 1.5 Have at least 2 application pods running. 
+```
+# created deploymnet object (part of assessment file)
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: tomcat-app
+  name: tomcat-app
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: tomcat-app
+  template:
+    metadata:
+      labels:
+        app: tomcat-app
+    spec:
+      containers:
+      - image: kapendralive/tomcat-app:latest
+        name: tomcat-app
+        readinessProbe:
+          tcpSocket:
+            port: 8080
+          initialDelaySeconds: 5
+          periodSeconds: 10
+          timeoutSeconds: 2
+          failureThreshold: 1
+          successThreshold: 1
+        livenessProbe:
+          tcpSocket:
+            port: 8080
+          initialDelaySeconds: 15
+          periodSeconds: 20
+          timeoutSeconds: 2
+          failureThreshold: 1
+          successThreshold: 1
+        volumeMounts:
+        - name: logs
+          mountPath: /opt/tomcat/logs/
+      volumes:
+        - name: logs      
+          hostPath:
+            path: /var/log/tomcat-app
+            type: ""
+
+```
+
+- 1.6 Please have readiness and liveliness probes.
+
+```
+# Added as port check 
+...
+        readinessProbe:
+          tcpSocket:
+            port: 8080
+          initialDelaySeconds: 5
+          periodSeconds: 10
+          timeoutSeconds: 2
+          failureThreshold: 1
+          successThreshold: 1
+        livenessProbe:
+          tcpSocket:
+            port: 8080
+          initialDelaySeconds: 15
+          periodSeconds: 20
+          timeoutSeconds: 2
+          failureThreshold: 1
+          successThreshold: 1
+...
+```
+
+- 1.7 K8s files can be shared with
+
+```
+https://github.com/kapendra-com/haptik-k8s/blob/dev/assessment.yaml
+```
 
 2. Put monitoring for the above setup on 3 important data points you think are relevant for
 the above application on Kubernetes. (Choose any tool, eg. Prometheus)
@@ -59,54 +186,9 @@ the logs to an ELK 7.x stack deployed on the same VM.
 ![alt text](https://github.com/[username]/[reponame]/blob/[branch]/image.jpg?raw=true)
 
 
-# haptik-k8s
-interview Assignment
-
-#
-
-# Setup Base
-
-
- # Setup Kubectl
-```
-sudo su -
-curl -LO https://storage.googleapis.com/kubernetes-release/release/`curl -s https://storage.googleapis.com/kubernetes-release/release/stable.txt`/bin/linux/amd64/kubectl && chmod +x ./kubectl && sudo mv ./kubectl /usr/local/bin/kubectl
-```
-
-# Setup Docker
-
-```
-apt-get update && sudo apt-get install docker.io -y 
-systemctl start docker 
-systemctl status docker
-apt install conntrack
-```
-
-# Start Minikube
-
-```
-curl -Lo minikube https://storage.googleapis.com/minikube/releases/latest/minikube-linux-amd64 && chmod +x minikube && sudo mv minikube /usr/local/bin/
-minikube start --vm-driver=none
-```
-
-```
-minikube status
-minikube
-type: Control Plane
-host: Running
-kubelet: Running
-apiserver: Running
-kubeconfig: Configured
 
 ```
 
 
-# setup Ingress
-```
-minikube addons enable ingress
-```
-
-
-# Setup application 
 
 
