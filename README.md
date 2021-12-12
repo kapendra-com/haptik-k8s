@@ -1,7 +1,22 @@
-1. Setup Kubernetes &amp; Deploy a simple Tomcat Application via Nginx Ingress controller.
-Have at least 2 application pods running. Please have readiness and liveliness probes.
-(Kubernetes can be minikube for now on a Linux machine, K8s files can be shared with
-us. It can also be done on a cloud VM and details can be shared)
+# Task 1 
+- 1.1 Share machine details 
+```
+kapendra@Opstree-Kapendra:~/haptik$ cat /proc/meminfo
+MemTotal:       12156388 kB
+
+kapendra@Opstree-Kapendra:~/haptik$ lscpu
+Architecture:                    x86_64
+CPU op-mode(s):                  32-bit, 64-bit
+Byte Order:                      Little Endian
+Address sizes:                   39 bits physical, 48 bits virtual
+CPU(s):                          4
+
+- 1.2 Setup Kubernetes (minikube)
+1.3 Deploy a simple Tomcat Application 
+1.4 Expose via Nginx Ingress controller.
+1.5 Have at least 2 application pods running. 
+1.6 Please have readiness and liveliness probes.
+1.7 K8s files can be shared with
 
 2. Put monitoring for the above setup on 3 important data points you think are relevant for
 the above application on Kubernetes. (Choose any tool, eg. Prometheus)
