@@ -10,6 +10,7 @@ CPU op-mode(s):                  32-bit, 64-bit
 Byte Order:                      Little Endian
 Address sizes:                   39 bits physical, 48 bits virtual
 CPU(s):                          4
+```
 
 - 1.2 Setup Kubernetes (minikube)
 1.3 Deploy a simple Tomcat Application 
