@@ -220,6 +220,7 @@ ingress.networking.k8s.io/kibana created
 ...
 ```
 
+
 # Task 3
 
 - 3.1 Add filebeat daemon
@@ -306,7 +307,11 @@ Once you have the Filebeat daemon running, push the application logs please also
 the logs to an ELK 7.x stack deployed on the same VM.
 
 
+App log  <br />
+![alt text](https://github.com/kapendra-com/haptik-k8s/blob/dev/img/app-log.png?raw=true)
 
+Ingress Log <br />
+![alt text](https://github.com/kapendra-com/haptik-k8s/blob/dev/img/container-log.png?raw=true)
 
 
 
