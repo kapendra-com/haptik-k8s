@@ -174,14 +174,132 @@ spec:
 https://github.com/kapendra-com/haptik-k8s/blob/dev/assessment.yaml
 ```
 
-2. Put monitoring for the above setup on 3 important data points you think are relevant for
-the above application on Kubernetes. (Choose any tool, eg. Prometheus)
+# Task 2
+- 2.1 monitoring for the above setup
 
-3. Add filebeat daemon set to the current setup so that it can read application logs from the
-pod.
-Bonus
+``` 
+# EFK stack
+
+kubectl apply -f efk/
+
+namespace/kube-logging created
+statefulset.apps/es-cluster created
+persistentvolume/es-pv-01 created
+persistentvolume/es-pv-02 created
+persistentvolume/es-pv-03 created
+service/elasticsearch created
+serviceaccount/fluentd created
+clusterrole.rbac.authorization.k8s.io/fluentd created
+clusterrolebinding.rbac.authorization.k8s.io/fluentd created
+configmap/fluentdconf created
+daemonset.apps/fluentd created
+deployment.apps/kibana created
+service/kibana created
+ingress.networking.k8s.io/kibana created
+
+```    
+
+- 2.2 Put logging at important data points
+
+```
+...
+      - name: varlog
+        hostPath:
+          path: /var/log
+      - name: varlibdockercontainers
+        hostPath:
+          path: /var/lib/docker/containers
+      - name: fluentconfig
+        configMap:
+          name: fluentdconf
+...
+```
+
+# Task 3
+
+- 3.1 Add filebeat daemon
+```
+---
+apiVersion: apps/v1
+kind: DaemonSet
+metadata:
+  name: fluentd
+  namespace: kube-logging
+  labels:
+    app: fluentd
+    kubernetes.io/cluster-service: "true"
+spec:
+  updateStrategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxUnavailable: 1
+  selector:
+    matchLabels:
+      app: fluentd
+      kubernetes.io/cluster-service: "true"
+  template:
+    metadata:
+      labels:
+        app: fluentd
+        kubernetes.io/cluster-service: "true"
+    spec:
+      serviceAccount: fluentd
+      containers:
+      - name: fluentd
+        image: fluent/fluentd-kubernetes-daemonset:v1.10.4-debian-elasticsearch7-1.0
+        env:
+          - name:  FLUENT_ELASTICSEARCH_HOST
+            value: "elasticsearch.kube-logging.svc.cluster.local"
+          - name:  FLUENT_ELASTICSEARCH_PORT
+            value: "9200"
+          - name: FLUENT_ELASTICSEARCH_SCHEME
+            value: "http"
+        resources:
+          limits:
+            memory: 512Mi
+          requests:
+            cpu: 100m
+            memory: 200Mi
+        volumeMounts:
+        - name: varlog
+          mountPath: /var/log
+        - name: varlibdockercontainers
+          mountPath: /var/lib/docker/containers
+          readOnly: true
+        - name: fluentconfig
+          mountPath: /fluentd/etc/fluent.conf
+          subPath: fluent.conf
+      terminationGracePeriodSeconds: 30
+      volumes:
+      - name: varlog
+        hostPath:
+          path: /var/log
+      - name: varlibdockercontainers
+        hostPath:
+          path: /var/lib/docker/containers
+      - name: fluentconfig
+        configMap:
+          name: fluentdconf
+```
+
+- 3.2 set to the current setup so that it can read application logs from the pod.
+
+```
+        volumeMounts:
+        - name: logs
+          mountPath: /opt/tomcat/logs/
+      volumes:
+        - name: logs      
+          hostPath:
+            path: /var/log/tomcat-app
+            type: ""
+```
+
+
+# Bonus
 Once you have the Filebeat daemon running, push the application logs please also push
 the logs to an ELK 7.x stack deployed on the same VM.
+
 
 ![alt text](https://github.com/[username]/[reponame]/blob/[branch]/image.jpg?raw=true)
 
