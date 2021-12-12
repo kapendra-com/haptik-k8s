@@ -13,6 +13,34 @@ CPU(s):                          4
 ```
 
 - 1.2 Setup Kubernetes (minikube)
+```
+# Setup Kubectl
+
+sudo su -
+curl -LO https://storage.googleapis.com/kubernetes-release/release/`curl -s https://storage.googleapis.com/kubernetes-release/release/stable.txt`/bin/linux/amd64/kubectl && chmod +x ./kubectl && sudo mv ./kubectl /usr/local/bin/kubectl
+
+
+# Setup Docker
+
+apt-get update && sudo apt-get install docker.io -y 
+systemctl start docker 
+systemctl status docker
+apt install conntrack
+
+# Start Minikube
+
+curl -Lo minikube https://storage.googleapis.com/minikube/releases/latest/minikube-linux-amd64 && chmod +x minikube && sudo mv minikube /usr/local/bin/
+minikube start --vm-driver=none
+
+root@Opstree-Kapendra:/home/kapendra/haptikGIT/haptik-k8s# minikube status
+minikube
+type: Control Plane
+host: Running
+kubelet: Running
+apiserver: Running
+kubeconfig: Configured
+
+```
 1.3 Deploy a simple Tomcat Application 
 1.4 Expose via Nginx Ingress controller.
 1.5 Have at least 2 application pods running. 
@@ -34,30 +62,7 @@ the logs to an ELK 7.x stack deployed on the same VM.
 # haptik-k8s
 interview Assignment
 
-# Machine Details
-
-```
-Welcome to Ubuntu 20.04.3 LTS (GNU/Linux 5.11.0-1020-aws x86_64)
-
- * Documentation:  https://help.ubuntu.com
- * Management:     https://landscape.canonical.com
- * Support:        https://ubuntu.com/advantage
-
-  System information as of Sat Dec 11 15:58:47 UTC 2021
-
-  System load:  0.27               Processes:                136
-  Usage of /:   11.4% of 29.02GB   Users logged in:          0
-  Memory usage: 21%                IPv4 address for docker0: 172.17.0.1
-  Swap usage:   0%                 IPv4 address for ens5:    172.31.81.155
-
-
-42 updates can be applied immediately.
-26 of these updates are standard security updates.
-To see these additional updates run: apt list --upgradable
-
-
-Last login: Sat Dec 11 15:48:00 2021 from 122.161.67.25
-```
+#
 
 # Setup Base
 
