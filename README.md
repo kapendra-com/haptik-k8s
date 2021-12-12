@@ -173,8 +173,11 @@ spec:
 ```
 https://github.com/kapendra-com/haptik-k8s/blob/dev/assessment.yaml
 ```
-
+- POD 1
 ![alt text](https://github.com/kapendra-com/haptik-k8s/blob/dev/img/app1.png?raw=true)
+
+- POD 2
+![alt text](https://github.com/kapendra-com/haptik-k8s/blob/dev/img/app2.png?raw=true)
 
 # Task 2
 - 2.1 monitoring for the above setup
