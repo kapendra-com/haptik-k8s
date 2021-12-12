@@ -173,10 +173,10 @@ spec:
 ```
 https://github.com/kapendra-com/haptik-k8s/blob/dev/assessment.yaml
 ```
-- POD 1
+POD 1 <br />
 ![alt text](https://github.com/kapendra-com/haptik-k8s/blob/dev/img/app1.png?raw=true)
 
-- POD 2
+POD 2 <br />
 ![alt text](https://github.com/kapendra-com/haptik-k8s/blob/dev/img/app2.png?raw=true)
 
 # Task 2
