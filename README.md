@@ -171,7 +171,7 @@ spec:
 - 1.7 K8s files can be shared with
 
 ```
-https://github.com/kapendra-com/haptik-k8s/blob/dev/assessment.yaml
+https://github.com/kapendra-com/haptik-k8s/blob/main/assessment.yaml
 ```
 
 2. Put monitoring for the above setup on 3 important data points you think are relevant for
